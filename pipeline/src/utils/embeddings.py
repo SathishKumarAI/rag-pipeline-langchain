@@ -17,6 +17,10 @@ Usage:
 
 import numpy as np
 from typing import List, Optional, Union
+
+from .exceptions import EmbeddingError
+from .resilience import DEFAULT_TRANSIENT, retry_on_transient
+
 try:
     import openai
 except ImportError:
@@ -25,6 +29,22 @@ try:
     from sentence_transformers import SentenceTransformer
 except ImportError:
     SentenceTransformer = None
+
+
+# Transient OpenAI errors worth retrying, merged with the generic set. Built
+# only when openai is installed so the import stays optional.
+_OPENAI_TRANSIENT = DEFAULT_TRANSIENT
+if openai is not None:
+    _OPENAI_TRANSIENT = DEFAULT_TRANSIENT + tuple(
+        e
+        for e in (
+            getattr(openai, "APIConnectionError", None),
+            getattr(openai, "APITimeoutError", None),
+            getattr(openai, "RateLimitError", None),
+            getattr(openai, "InternalServerError", None),
+        )
+        if e is not None
+    )
 
 
 def generate_embeddings(
@@ -139,46 +159,58 @@ def check_embedding_dimension(
     return dim
 
 
+@retry_on_transient(exceptions=_OPENAI_TRANSIENT)
 def _generate_openai_embeddings(
     text: str,
     model: str,
     api_key: Optional[str],
 ) -> List[float]:
-    """Generate embeddings using OpenAI API."""
+    """Generate embeddings using OpenAI API (retries transient failures)."""
     if openai is None:
-        raise ImportError("openai package not installed")
-    
-    client = openai.OpenAI(api_key=api_key)
-    response = client.embeddings.create(
-        model=model,
-        input=text,
-    )
-    return response.data[0].embedding
+        raise EmbeddingError("openai package not installed")
+
+    try:
+        client = openai.OpenAI(api_key=api_key)
+        response = client.embeddings.create(
+            model=model,
+            input=text,
+        )
+        return response.data[0].embedding
+    except _OPENAI_TRANSIENT:
+        raise  # let retry_on_transient handle the backoff/retry
+    except Exception as exc:  # non-transient -> typed domain error
+        raise EmbeddingError(f"OpenAI embedding failed: {exc}") from exc
 
 
+@retry_on_transient(exceptions=_OPENAI_TRANSIENT)
 def _batch_openai_embeddings(
     texts: List[str],
     model: str,
     batch_size: int,
     api_key: Optional[str],
 ) -> List[List[float]]:
-    """Generate embeddings for a batch using OpenAI API."""
+    """Generate embeddings for a batch using OpenAI API (retries transient failures)."""
     if openai is None:
-        raise ImportError("openai package not installed")
-    
-    client = openai.OpenAI(api_key=api_key)
-    all_embeddings = []
-    
-    for i in range(0, len(texts), batch_size):
-        batch = texts[i:i + batch_size]
-        response = client.embeddings.create(
-            model=model,
-            input=batch,
-        )
-        batch_embeddings = [item.embedding for item in response.data]
-        all_embeddings.extend(batch_embeddings)
-    
-    return all_embeddings
+        raise EmbeddingError("openai package not installed")
+
+    try:
+        client = openai.OpenAI(api_key=api_key)
+        all_embeddings = []
+
+        for i in range(0, len(texts), batch_size):
+            batch = texts[i:i + batch_size]
+            response = client.embeddings.create(
+                model=model,
+                input=batch,
+            )
+            batch_embeddings = [item.embedding for item in response.data]
+            all_embeddings.extend(batch_embeddings)
+
+        return all_embeddings
+    except _OPENAI_TRANSIENT:
+        raise  # let retry_on_transient handle the backoff/retry
+    except Exception as exc:  # non-transient -> typed domain error
+        raise EmbeddingError(f"OpenAI batch embedding failed: {exc}") from exc
 
 
 def _generate_sentence_transformer_embeddings(
