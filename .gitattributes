@@ -1,0 +1,24 @@
+# Normalize line endings: treat all text as LF in the repo.
+* text=auto eol=lf
+
+# Explicit text types
+*.py    text eol=lf
+*.md    text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.txt   text eol=lf
+*.json  text eol=lf
+*.cfg   text eol=lf
+*.ini   text eol=lf
+*.toml  text eol=lf
+*.sh    text eol=lf
+
+# Binary: never touch
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.pdf   binary
+*.faiss binary
+*.bin   binary
+*.pkl   binary
