@@ -150,71 +150,19 @@ def get_vector_store(
     """
     if store_type == "in_memory":
         return InMemoryVectorStore()
-    elif store_type == "pinecone":
-        from .pinecone_store import PineconeVectorStore
-        return PineconeVectorStore(index_path=index_path, **kwargs)
     elif store_type == "faiss":
         from .faiss_store import FAISSVectorStore
         return FAISSVectorStore(index_path=index_path, **kwargs)
     elif store_type == "chroma":
         from .chroma_store import ChromaVectorStore
         return ChromaVectorStore(index_path=index_path, **kwargs)
+    elif store_type == "pinecone":
+        # Pinecone is a hosted service (needs API key + network); not wired for
+        # local/offline use. Add a pinecone_store.py adapter when deploying.
+        raise NotImplementedError(
+            "Pinecone store is not implemented. Use 'faiss' or 'chroma' for "
+            "local use, or add a PineconeVectorStore adapter for hosted deploys."
+        )
     else:
         raise ValueError(f"Unsupported vector store type: {store_type}")
-
-
-# Placeholder implementations (to be implemented based on actual backends)
-class PineconeVectorStore(VectorStore):
-    """Pinecone vector store implementation (placeholder)."""
-    def __init__(self, index_path: Optional[str] = None, **kwargs):
-        # This would integrate with actual Pinecone client
-        raise NotImplementedError("Pinecone store not yet implemented")
-    
-    def add_documents(self, documents: List[Dict[str, Any]]) -> None:
-        pass
-    
-    def search(self, query_embedding: List[float], top_k: int = 5, filter: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
-        pass
-    
-    def delete(self, ids: List[str]) -> None:
-        pass
-    
-    def clear(self) -> None:
-        pass
-
-
-class FAISSVectorStore(VectorStore):
-    """FAISS vector store implementation (placeholder)."""
-    def __init__(self, index_path: Optional[str] = None, **kwargs):
-        raise NotImplementedError("FAISS store not yet implemented")
-    
-    def add_documents(self, documents: List[Dict[str, Any]]) -> None:
-        pass
-    
-    def search(self, query_embedding: List[float], top_k: int = 5, filter: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
-        pass
-    
-    def delete(self, ids: List[str]) -> None:
-        pass
-    
-    def clear(self) -> None:
-        pass
-
-
-class ChromaVectorStore(VectorStore):
-    """Chroma vector store implementation (placeholder)."""
-    def __init__(self, index_path: Optional[str] = None, **kwargs):
-        raise NotImplementedError("Chroma store not yet implemented")
-    
-    def add_documents(self, documents: List[Dict[str, Any]]) -> None:
-        pass
-    
-    def search(self, query_embedding: List[float], top_k: int = 5, filter: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
-        pass
-    
-    def delete(self, ids: List[str]) -> None:
-        pass
-    
-    def clear(self) -> None:
-        pass
 

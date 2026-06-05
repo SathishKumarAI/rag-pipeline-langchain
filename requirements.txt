@@ -12,3 +12,6 @@ tiktoken
 structlog
 pytest
 mlflow
+numpy
+faiss-cpu
+chromadb
