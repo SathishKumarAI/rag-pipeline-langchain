@@ -4,7 +4,8 @@ A chronological, reasoning-first record of how this repository was diagnosed and
 completed, written so the decisions (not just the diffs) are reviewable. Each
 entry states **what** was observed, **why** it mattered, and **how** it was
 resolved. Companion docs: [ADRs](adr/), [research](research/rag_best_practices.md),
-[prompts](../prompts/).
+[prompts](../prompts/). **To resume work, start at
+[`CONTINUE_HERE.md`](CONTINUE_HERE.md).**
 
 ---
 
