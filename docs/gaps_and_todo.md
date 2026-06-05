@@ -1,21 +1,30 @@
 # Gaps and Future Improvements
 
+> **Update (2026-06):** Several High-priority gaps were closed in the
+> refactor effort. See [`BUILD_LOG.md`](BUILD_LOG.md), the
+> [ADRs](adr/), and [`research/rag_best_practices.md`](research/rag_best_practices.md)
+> for the full reasoning, branch trail, and research-driven roadmap.
+>
+> **Done:** real FAISS + Chroma vector stores (OSS adapters, ADR-0001) ·
+> typed error hierarchy + tenacity retry (ADR-0002) · lazy package imports
+> (ADR-0003) · LF normalization (ADR-0004) · repaired packaging/imports so the
+> test suite runs (50 passed, 2 skipped).
+
 ## Known Gaps
 
 ### 1. Vector Store Implementations
 
-**Status**: Placeholder implementations exist
+**Status**: ✅ FAISS and Chroma implemented (OSS adapters, see ADR-0001);
+Pinecone still pending (hosted, raises explicit NotImplementedError).
 
 **Missing:**
-- Full Pinecone integration
-- FAISS implementation
-- Chroma implementation
-- Connection pooling and retry logic
+- Full Pinecone integration (hosted; needs API key + network)
+- Connection pooling and retry logic for hosted backends
 - Batch operations optimization
 
-**Priority**: High
+**Priority**: Medium (local stores done; Pinecone only for hosted deploy)
 
-**Estimated Effort**: 2-3 days per store
+**Estimated Effort**: 2-3 days (Pinecone)
 
 ### 2. Advanced Re-ranking
 
@@ -77,9 +86,12 @@
 
 ### 1. Error Handling
 
-**Issue**: Some modules have basic error handling
+**Status**: ◐ Partially done (ADR-0002). A typed `RAGError` hierarchy
+(`utils/exceptions.py`) and a tenacity-based `retry_on_transient`
+(`utils/resilience.py`) now exist and are applied to the OpenAI embedding calls.
 
-**Improvement**: Standardize error types, add retry logic, improve error messages
+**Remaining**: thread the typed exceptions through the rest of the modules
+(loaders, retriever, inference) and retire the legacy `llm_utils.retry_with_backoff`.
 
 **Priority**: Medium
 
