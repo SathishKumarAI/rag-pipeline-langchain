@@ -7,8 +7,8 @@ corresponding libraries are not installed.
 import pytest
 
 from utils import embeddings as emb_utils
-from rag_pipeline.embeddings.openai_embeddings import OpenAIEmbedder
-from rag_pipeline.embeddings.local_embeddings import LocalSentenceTransformerEmbedder
+from embeddings.openai_embeddings import OpenAIEmbedder
+from embeddings.local_embeddings import LocalSentenceTransformerEmbedder
 
 
 @pytest.mark.skipif(emb_utils.openai is None, reason="openai package not installed")

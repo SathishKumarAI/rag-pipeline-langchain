@@ -21,11 +21,11 @@ Usage:
 from typing import Any, Dict, List, Optional
 from pathlib import Path
 
-from ..utils.logging_utils import get_logger
-from ..utils.io_utils import read_text, ensure_dir
-from ..utils.rag_preprocessing import clean_text, chunk_text, enrich_metadata, add_chunk_index
-from ..utils.embeddings import batch_embeddings
-from ..utils.validation import validate_document, validate_batch_chunks
+from utils.logging_utils import get_logger
+from utils.io_utils import read_text, ensure_dir
+from utils.rag_preprocessing import clean_text, chunk_text, enrich_metadata, add_chunk_index
+from utils.embeddings import batch_embeddings
+from utils.validation import validate_document, validate_batch_chunks
 from .storage.vector_store import VectorStore, get_vector_store
 
 logger = get_logger(__name__)

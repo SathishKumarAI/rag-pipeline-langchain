@@ -3,9 +3,9 @@
 from pathlib import Path
 
 from rag.models import Document
-from rag_pipeline.chunking.fixed_window import FixedWindowChunker
-from rag_pipeline.chunking.markdown_chunker import MarkdownHeadingChunker
-from rag_pipeline.chunking.page_chunker import PageMarkerChunker
+from chunking.fixed_window import FixedWindowChunker
+from chunking.markdown_chunker import MarkdownHeadingChunker
+from chunking.page_chunker import PageMarkerChunker
 
 
 def _doc(text: str) -> Document:

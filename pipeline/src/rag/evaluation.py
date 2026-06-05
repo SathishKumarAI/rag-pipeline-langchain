@@ -21,7 +21,7 @@ Usage:
 import time
 from typing import Any, Dict, List, Optional, Tuple
 
-from ..utils.logging_utils import get_logger
+from utils.logging_utils import get_logger
 
 logger = get_logger(__name__)
 

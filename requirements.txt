@@ -13,6 +13,7 @@ structlog
 pytest
 mlflow
 numpy
+pandas
 faiss-cpu
 chromadb
 tenacity

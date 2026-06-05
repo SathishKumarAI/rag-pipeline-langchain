@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import List
 
-from PyPDF2 import PdfReader
+from pypdf import PdfReader
 
 from rag.models import Document
 

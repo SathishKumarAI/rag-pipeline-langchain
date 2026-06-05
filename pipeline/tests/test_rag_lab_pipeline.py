@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from rag.models import Document
-from rag_pipeline.chunking.fixed_window import FixedWindowChunker
+from chunking.fixed_window import FixedWindowChunker
 from rag_pipeline.lab_pipeline import RAGLabConfig, SimpleRAGPipeline
 
 

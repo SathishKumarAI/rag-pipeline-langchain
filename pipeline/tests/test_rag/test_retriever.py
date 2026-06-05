@@ -53,9 +53,9 @@ def test_retriever_with_filter():
     ]
     store.add_documents(docs)
     
-    retriever = Retriever(store, top_k=5)
-    # Note: InMemoryVectorStore filter implementation would need to be tested
-    # For now, just test that it doesn't crash
-    results = retriever.retrieve("test query")
+    # Inject a deterministic embedder so the test needs no live provider.
+    retriever = Retriever(store, top_k=5, embed_fn=lambda q: [0.1, 0.2, 0.3])
+    results = retriever.retrieve("test query", filter={"category": "A"})
     assert isinstance(results, list)
+    assert all(r["metadata"].get("category") == "A" for r in results)
 

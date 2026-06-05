@@ -18,7 +18,7 @@ Usage:
 import re
 import html
 from typing import Any, Dict, List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 try:
     from bs4 import BeautifulSoup
 except ImportError:
@@ -245,7 +245,7 @@ def enrich_metadata(
     if timestamp is not None:
         metadata["timestamp"] = timestamp.isoformat()
     elif "timestamp" not in metadata:
-        metadata["timestamp"] = datetime.utcnow().isoformat()
+        metadata["timestamp"] = datetime.now(timezone.utc).isoformat()
     
     # Add any additional metadata
     metadata.update(kwargs)

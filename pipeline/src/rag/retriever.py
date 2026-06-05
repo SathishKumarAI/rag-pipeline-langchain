@@ -14,11 +14,11 @@ Usage:
     results = retriever.retrieve("What is RAG?")
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional
 
-from ..utils.logging_utils import get_logger
-from ..utils.embeddings import generate_embeddings
-from ..utils.validation import validate_query
+from utils.logging_utils import get_logger
+from utils.embeddings import generate_embeddings
+from utils.validation import validate_query
 from .storage.vector_store import VectorStore
 
 logger = get_logger(__name__)
@@ -36,22 +36,28 @@ class Retriever:
         embedding_provider: str = "openai",
         top_k: int = 5,
         use_keyword_search: bool = False,
+        embed_fn: Optional[Callable[[str], List[float]]] = None,
     ):
         """
         Initialize retriever.
-        
+
         Args:
             vector_store: Vector store instance
             embedding_model: Embedding model name
             embedding_provider: Embedding provider
             top_k: Number of documents to retrieve
             use_keyword_search: If True, also use keyword search (not yet implemented)
+            embed_fn: Optional callable that turns a query string into an
+                embedding vector. When provided it overrides
+                embedding_provider/model — useful for tests or custom embedders
+                without a live provider.
         """
         self.vector_store = vector_store
         self.embedding_model = embedding_model
         self.embedding_provider = embedding_provider
         self.top_k = top_k
         self.use_keyword_search = use_keyword_search
+        self.embed_fn = embed_fn
     
     def retrieve(
         self,
@@ -76,12 +82,15 @@ class Retriever:
         
         logger.debug("Retrieving documents", query=query[:100], top_k=top_k)
         
-        # Generate query embedding
-        query_embedding = generate_embeddings(
-            query,
-            model=self.embedding_model,
-            provider=self.embedding_provider,
-        )
+        # Generate query embedding (injected embedder takes precedence)
+        if self.embed_fn is not None:
+            query_embedding = self.embed_fn(query)
+        else:
+            query_embedding = generate_embeddings(
+                query,
+                model=self.embedding_model,
+                provider=self.embedding_provider,
+            )
         
         # Search vector store
         results = self.vector_store.search(

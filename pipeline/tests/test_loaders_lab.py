@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from rag.models import Document
-from rag_pipeline.loaders.base import get_loader_for_path
+from loaders.base import get_loader_for_path
 
 
 def _write(tmp_path: Path, name: str, content: str) -> Path:

@@ -17,8 +17,8 @@ Usage:
 
 from typing import Any, Dict, List, Optional
 
-from ..utils.logging_utils import get_logger
-from ..utils.llm_utils import build_rag_prompt
+from utils.logging_utils import get_logger
+from utils.llm_utils import build_rag_prompt
 
 logger = get_logger(__name__)
 

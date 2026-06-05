@@ -171,7 +171,12 @@ def call_llm(
         raise ValueError(f"Unsupported LLM provider: {provider}")
 
 
-@retry_with_backoff(max_retries=3, exceptions=(openai.OpenAIError,))
+@retry_with_backoff(
+    max_retries=3,
+    # Guard: openai may be None when the package isn't installed, and this
+    # decorator is evaluated at import time. Fall back to a generic Exception.
+    exceptions=(openai.OpenAIError,) if openai is not None else (Exception,),
+)
 def _call_openai(
     prompt: str,
     model: str,

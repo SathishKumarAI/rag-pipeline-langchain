@@ -18,9 +18,9 @@ Usage:
 
 from typing import Any, Dict, List, Optional
 
-from ..utils.logging_utils import get_logger
-from ..utils.llm_utils import call_llm
-from ..utils.validation import validate_query
+from utils.logging_utils import get_logger
+from utils.llm_utils import call_llm
+from utils.validation import validate_query
 from .retriever import Retriever
 from .re_ranker import ReRanker
 from .prompt_builder import PromptBuilder

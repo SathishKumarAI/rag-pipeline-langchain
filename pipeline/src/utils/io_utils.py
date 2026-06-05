@@ -48,12 +48,12 @@ import pandas as pd
 #         return f.read()
 
 from pathlib import Path
-from PyPDF2 import PdfReader  # pip install PyPDF2
+from pypdf import PdfReader  # pip install pypdf
 
 def read_text(file_path: Path):
     """
     Safe universal reader:
-    - PDFs via PyPDF2
+    - PDFs via pypdf
     - Other text files via multi-encoding fallback
     """
     suffix = file_path.suffix.lower()

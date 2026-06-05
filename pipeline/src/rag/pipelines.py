@@ -26,7 +26,7 @@ Usage:
 from typing import Any, Dict, List, Optional
 from pathlib import Path
 
-from ..utils.logging_utils import get_logger
+from utils.logging_utils import get_logger
 from .index_builder import IndexBuilder
 from .inference import RAGInference
 
